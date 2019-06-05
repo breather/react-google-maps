@@ -18,79 +18,7 @@ import { MAP, ANCHOR, INFO_BOX } from "../../constants"
  *
  * @see http://htmlpreview.github.io/?https://github.com/googlemaps/v3-utility-library/blob/master/infobox/docs/reference.html
  */
-export class InfoBox extends React.PureComponent {
-  static propTypes = {
-    /**
-     * @type InfoBoxOptions
-     */
-    defaultOptions: PropTypes.any,
-
-    /**
-     * @type LatLng|LatLngLiteral
-     */
-    defaultPosition: PropTypes.any,
-
-    /**
-     * @type boolean
-     */
-    defaultVisible: PropTypes.bool,
-
-    /**
-     * @type number
-     */
-    defaultZIndex: PropTypes.number,
-
-    /**
-     * @type InfoBoxOptions
-     */
-    options: PropTypes.any,
-
-    /**
-     * @type LatLng|LatLngLiteral
-     */
-    position: PropTypes.any,
-
-    /**
-     * @type boolean
-     */
-    visible: PropTypes.bool,
-
-    /**
-     * @type number
-     */
-    zIndex: PropTypes.number,
-
-    /**
-     * function
-     */
-    onCloseClick: PropTypes.func,
-
-    /**
-     * function
-     */
-    onDomReady: PropTypes.func,
-
-    /**
-     * function
-     */
-    onContentChanged: PropTypes.func,
-
-    /**
-     * function
-     */
-    onPositionChanged: PropTypes.func,
-
-    /**
-     * function
-     */
-    onZindexChanged: PropTypes.func,
-  }
-
-  static contextTypes = {
-    [MAP]: PropTypes.object,
-    [ANCHOR]: PropTypes.object,
-  }
-
+class InfoBox extends React.PureComponent {
   state = {
     [INFO_BOX]: null,
   }
@@ -102,13 +30,14 @@ export class InfoBox extends React.PureComponent {
     if (!canUseDOM || this.state[INFO_BOX]) {
       return
     }
+
     const {
       InfoBox: GoogleMapsInfobox,
     } = require(/* "google-maps-infobox" uses "google" as a global variable. Since we don't
-       * have "google" on the server, we can not use it in server-side rendering.
-       * As a result, we import "google-maps-infobox" here to prevent an error on
-       * a isomorphic server.
-       */ `google-maps-infobox`)
+     * have "google" on the server, we can not use it in server-side rendering.
+     * As a result, we import "google-maps-infobox" here to prevent an error on
+     * a isomorphic server.
+     */ `google-maps-infobox`)
     const infoBox = new GoogleMapsInfobox()
     construct(InfoBox.propTypes, updaterMap, this.props, infoBox)
     infoBox.setMap(this.context[MAP])
@@ -120,11 +49,6 @@ export class InfoBox extends React.PureComponent {
   componentDidMount() {
     componentDidMount(this, this.state[INFO_BOX], eventMap)
     const content = document.createElement(`div`)
-    ReactDOM.unstable_renderSubtreeIntoContainer(
-      this,
-      React.Children.only(this.props.children),
-      content
-    )
     this.state[INFO_BOX].setContent(content)
     open(this.state[INFO_BOX], this.context[ANCHOR])
   }
@@ -137,28 +61,23 @@ export class InfoBox extends React.PureComponent {
       updaterMap,
       prevProps
     )
-    if (this.props.children !== prevProps.children) {
-      ReactDOM.unstable_renderSubtreeIntoContainer(
-        this,
-        React.Children.only(this.props.children),
-        this.state[INFO_BOX].getContent()
-      )
-    }
   }
 
   componentWillUnmount() {
     componentWillUnmount(this)
     const infoBox = this.state[INFO_BOX]
     if (infoBox) {
-      if (infoBox.getContent()) {
-        ReactDOM.unmountComponentAtNode(infoBox.getContent())
-      }
       infoBox.setMap(null)
     }
   }
 
   render() {
-    return false
+    const infoBox = this.state[INFO_BOX]
+    if (!infoBox || !infoBox.getContent()) {
+      return null
+    }
+
+    return ReactDOM.createPortal(this.props.children, infoBox.getContent())
   }
 
   /**
@@ -185,8 +104,6 @@ export class InfoBox extends React.PureComponent {
     return this.state[INFO_BOX].getZIndex()
   }
 }
-
-export default InfoBox
 
 const open = (infoBox, anchor) => {
   if (anchor) {
@@ -226,3 +143,10 @@ const updaterMap = {
     instance.setZIndex(zIndex)
   },
 }
+
+InfoBox.contextTypes = {
+  [MAP]: PropTypes.object,
+  [ANCHOR]: PropTypes.object,
+}
+
+export default InfoBox
