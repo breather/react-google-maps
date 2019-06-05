@@ -77,9 +77,7 @@ class InfoBox extends React.PureComponent {
       return null
     }
 
-    return (
-      <>{ReactDOM.createPortal(this.props.children, infoBox.getContent())}</>
-    )
+    return ReactDOM.createPortal(this.props.children, infoBox.getContent())
   }
 
   /**
