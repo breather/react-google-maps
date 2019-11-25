@@ -19,6 +19,78 @@ import { MAP, ANCHOR, INFO_BOX } from "../../constants"
  * @see http://htmlpreview.github.io/?https://github.com/googlemaps/v3-utility-library/blob/master/infobox/docs/reference.html
  */
 class InfoBox extends React.PureComponent {
+  static propTypes = {
+    /**
+     * @type InfoBoxOptions
+     */
+    defaultOptions: PropTypes.any,
+
+    /**
+     * @type LatLng|LatLngLiteral
+     */
+    defaultPosition: PropTypes.any,
+
+    /**
+     * @type boolean
+     */
+    defaultVisible: PropTypes.bool,
+
+    /**
+     * @type number
+     */
+    defaultZIndex: PropTypes.number,
+
+    /**
+     * @type InfoBoxOptions
+     */
+    options: PropTypes.any,
+
+    /**
+     * @type LatLng|LatLngLiteral
+     */
+    position: PropTypes.any,
+
+    /**
+     * @type boolean
+     */
+    visible: PropTypes.bool,
+
+    /**
+     * @type number
+     */
+    zIndex: PropTypes.number,
+
+    /**
+     * function
+     */
+    onCloseClick: PropTypes.func,
+
+    /**
+     * function
+     */
+    onDomReady: PropTypes.func,
+
+    /**
+     * function
+     */
+    onContentChanged: PropTypes.func,
+
+    /**
+     * function
+     */
+    onPositionChanged: PropTypes.func,
+
+    /**
+     * function
+     */
+    onZindexChanged: PropTypes.func,
+  }
+
+  static contextTypes = {
+    [MAP]: PropTypes.object,
+    [ANCHOR]: PropTypes.object,
+  }
+
   state = {
     [INFO_BOX]: null,
   }
