@@ -120,8 +120,6 @@ class InfoBox extends React.PureComponent {
 
   componentDidMount() {
     componentDidMount(this, this.state[INFO_BOX], eventMap)
-    const content = document.createElement(`div`)
-    this.state[INFO_BOX].setContent(content)
     open(this.state[INFO_BOX], this.context[ANCHOR])
   }
 
@@ -145,8 +143,12 @@ class InfoBox extends React.PureComponent {
 
   render() {
     const infoBox = this.state[INFO_BOX]
-    if (!infoBox || !infoBox.getContent()) {
+    if (!infoBox) {
       return null
+    }
+
+    if (!infoBox.getContent() && document) {
+      infoBox.setContent(document.createElement("div"))
     }
 
     return ReactDOM.createPortal(this.props.children, infoBox.getContent())
